@@ -20,7 +20,7 @@ def test_engine():
 def test_session(test_engine):
     """Create a test database session"""
     session = sessionmaker(bind=test_engine)
-    session = Session()
+    session = session()
     yield session
     session.close()
 
