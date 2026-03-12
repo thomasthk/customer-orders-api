@@ -54,6 +54,6 @@ python3 -m pytest tests/ -v
 - **Authentication** — Add API key or OAuth to protect endpoints.
 - **Pagination** — Add limit/offset to prevent large responses as data grows.
 - **Docker** — Containerise the application for consistent deployment across environments.
-- **CI/CD pipeline** — Add GitHub Actions for automated linting, testing, and deployment.
+- **Continuous deployment** — Extend CI pipeline to automatically deploy on merge.
 - **API versioning** — Prefix routes with `/v1/` to allow future breaking changes.
 - **Health endpoint** — Remove database row counts from the response to avoid leaking internal metrics.
