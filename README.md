@@ -31,3 +31,21 @@ python3 -m scripts.etl_export
 # Run tests
 python3 -m pytest tests/ -v
 ```
+
+## Choices and Reasoning
+
+- **SQLite** — Easy to setup database. No external database server needed.
+- **SQLAlchemy ORM** — Provides type-safe models and relationships. Makes the code more readable and maintainable.
+- **FastAPI** — Python web framework with automatic OpenAPI docs, built-in validation via Pydantic, and clear error handling.
+- **Pydantic** — Enforces response schemas so the API always returns predictable, typed JSON. Also used for loading environment variables via pydantic-settings.
+- **pytest** — Python testing framework. Tests use in-memory SQLite for speed and isolation.
+- **ruff** — all-in-one linter. Configured in pyproject.toml to keep tooling centralised.
+- **Environment variables (.env)** — Keeps configuration separate from code, following the twelve-factor app pattern.
+
+
+## Application Flow
+
+1. **Database setup** (`scripts/setup_database.py`) — Creates tables from ORM models, loads customers and orders from JSON files using merge for repeatability.
+2. **REST API** (`app/main.py`) — Serves customer data with orders via GET endpoints. Uses dependency injection for database sessions.
+3. **ETL export** (`scripts/etl_export.py`) — Extracts active customers with orders from the database, calculates total order values, and exports to a timestamped CSV.
+
