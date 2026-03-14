@@ -33,9 +33,9 @@ python -m scripts.etl_export
 python -m pytest tests/ -v
 ```
 
-### Windows
+### Windows (CMD)
 
-```bash
+```cmd
 git clone https://github.com/thomasthk/customer-orders-api.git
 cd customer-orders-api
 python -m venv venv
