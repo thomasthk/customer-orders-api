@@ -53,31 +53,23 @@ python -m pytest tests/ -v
 
 ### Database — SQLite
 
-I chose SQLite because it is simple to set up and requires no external server, which keeps the setup minimal. The database file is created automatically by the setup script. Since SQLAlchemy handles the differences between database engines, switching to PostgreSQL or MySQL later would only require changing the connection string in `.env`.
+I chose SQLite because it requires no external server. The database file is created automatically by the setup script. If the project needed to move to PostgreSQL or MySQL later, only the connection string in `.env` would need to change.
 
 ### ORM — SQLAlchemy
 
-SQLAlchemy provides defined models with relationships and constraints rather than raw SQL strings. This makes the code easier to follow and catches issues like invalid status values or negative quantities at the database level through `CheckConstraint`. I used `session.merge()` for data loading to handle repeatability. It performs an upsert, so running the setup script multiple times will not create duplicates.
+I used SQLAlchemy so the tables are defined as models with relationships and constraints rather than raw SQL strings. This makes the code easier to follow and catches issues like invalid status values or negative quantities at the database level through `CheckConstraint`. I used `session.merge()` for data loading to handle repeatability. It performs an upsert, so running the setup script multiple times will not create duplicates.
 
 ### API Framework — FastAPI
 
-I chose FastAPI as it generates interactive API documentation automatically at `/docs`, has built-in request validation via Pydantic, and uses Python type hints for both validation and documentation. The dependency injection system (`Depends(get_db)`) also made it straightforward to swap in a test database during testing.
-
-### Validation — Pydantic
-
-Pydantic schemas define the return of every API response, ensuring the output is always predictable and typed. I also used `pydantic-settings` to load configs from environment variables, keeping settings separate from code.
+I chose FastAPI as it generates interactive API documentation automatically at `/docs` and uses Python type hints for both validation and documentation. The dependency injection system (`Depends(get_db)`) also made it straightforward to swap in a test database during testing. I used Pydantic schemas to define the shape of every API response, so the output stays consistent, and `pydantic-settings` to load configuration from environment variables so that settings stay separate from code.
 
 ### Testing — pytest
 
 Tests run against an in-memory SQLite database so they are fast and do not touch the real database. I wrote tests covering all three tasks: database setup (including a repeatability test), API endpoints (including 404 handling), and the ETL transform logic.
 
-### Linting — ruff
+### Tooling — ruff and Environment Variables
 
-Ruff is a single fast linter. It is configured in `pyproject.toml` to keep all tooling configuration in one place.
-
-### Configuration — Environment Variables
-
-The `.env` file keeps paths and the database URL out of the codebase. A `.env.example` is included so that the expected variables are clear without exposing actual values.
+I used ruff as a single fast linter, configured in `pyproject.toml` to keep all tooling configuration in one place. I used a `.env` file to keep paths and the database URL out of the codebase. A `.env.example` is included so that the expected variables are clear without exposing actual values.
 
 ## Application Flow
 
@@ -98,7 +90,7 @@ The setup script reads sample data from JSON files in the `data/` directory and 
 
 ### 3. ETL Export (`scripts/etl_export.py`)
 
-The ETL script is designed to run as a standalone batch job.
+This script can be run on a schedule as a batch job.
 
 - **Extract** — Queries the database with a JOIN between customers and orders, filtered to `status = 'active'` only. Suspended and archived customers are excluded.
 - **Transform** — Concatenates `first_name` and `surname` into a single `name` field, and calculates `total_value` as `quantity × unit_price` for each order.
